@@ -110,7 +110,7 @@ namespace SmallWorldNetworks
             return index % n;
         }
 
-        private int GetLatticeDistance(int index1, int index2) 
+        public int GetLatticeDistance(int index1, int index2) 
         {
             int x1 = GetRow(index1);
             int x2 = GetRow(index2);
