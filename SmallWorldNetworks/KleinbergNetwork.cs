@@ -12,7 +12,7 @@ namespace SmallWorldNetworks
         public List<int>[] adjacencyList;
         Random random;
 
-        public KleinbergNetwork(int n, int p, int q, int r)
+        public KleinbergNetwork(int n, int p, int q, double r)
         {
             this.n = n;
             this.r = r;
@@ -64,6 +64,12 @@ namespace SmallWorldNetworks
             }
 
             double sum = 0;
+            weights[index] = 0;
+
+            foreach (var neighbor in adjacencyList[index]) 
+            {
+                weights[neighbor] = 0;
+            }
 
             foreach(var weight in weights) sum += weight;
 
@@ -83,11 +89,8 @@ namespace SmallWorldNetworks
                     acc += weights[i];
                     if (acc > rand)
                     {
-                        if (!adjacencyList[index].Contains(i)) 
-                        {
-                            adjacencyList[index].Add(i);
-                            picked++;
-                        }
+                        adjacencyList[index].Add(i);
+                        picked++;
                         break;
                     }
                          
@@ -118,6 +121,14 @@ namespace SmallWorldNetworks
             int y2 = GetCol(index2);
 
             return Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
+
+            //int dx = Math.Abs(x1 - x2);
+            //int dy = Math.Abs(y1 - y2);
+
+            //dx = Math.Min(dx, n - dx);
+            //dy = Math.Min(dy, n - dy);
+
+            //return dx + dy;
         }
 
     }
