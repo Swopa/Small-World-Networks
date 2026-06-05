@@ -11,12 +11,18 @@ namespace SmallWorldNetworks
         public static void Export(string filename, string header, List<string> rows) 
         { 
             List<string> allLines = new List<string>();
+            allLines.Add(header);
             if (rows != null)
             {
                 allLines.AddRange(rows);
             }
-            File.WriteAllLines(filename, allLines);
-            Console.WriteLine($"Saved to {filename}");
+
+            string outputPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "analysis", "data");
+            Directory.CreateDirectory(outputPath);
+            string fullPath = Path.Combine(outputPath, filename);
+
+            File.WriteAllLines(fullPath, allLines);
+            Console.WriteLine($"Saved to {fullPath}");
         }
     }
 }

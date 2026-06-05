@@ -10,3 +10,4 @@ x86/
 *.suo
 *.userosscache
 *.sln.docstates
+.vscode

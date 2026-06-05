@@ -62,8 +62,8 @@
 //}
 
 
-Experiments.RunKleinbergExperiment();
-
+//Experiments.RunWattsStrogatzExperiment(1000, 6, 10, true);
+Experiments.RunKleinbergExperiment(100, 1, 1, 500, true);
 
 
 

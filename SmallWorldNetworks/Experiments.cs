@@ -19,11 +19,11 @@
                     avgLength = NetworkMetrics.CalculateAveragePathLength(ws.adjacencyList);
                     avgClust = NetworkMetrics.CountClusteringCoefficient(ws.adjacencyList);
                     run++;
-                    rows.Add($"{p},{run},{n},{k},{avgLength},{avgClust}");
-                    CsvExporter.Export("ws_results.csv", "p,run#,n,k,avg_path_length,clustering_coefficient", rows);
+                    rows.Add($"{p},{run},{n},{k},{avgLength},{avgClust},{retryLogic}");
+                    
                 }
-                
             }
+            CsvExporter.Export("ws_results.csv", "p,run#,n,k,avg_path_length,clustering_coefficient,retry_Logic", rows);
         }
 
         public static void RunKleinbergExperiment(int n = 100, int p = 1, int q = 1, int attemptsPerR = 500, bool torus = false) 
@@ -51,10 +51,10 @@
                         else { steps++; totalHops += hops; }
                         run++;
                         rows.Add($@"{r},{run},{hops},{n},{p},{q},{(torus ? "torus" : "flat")}");
-                        CsvExporter.Export("kleinberg.csv", "r,run,hops,n,p,q,grid_type", rows);
                     }
                 }
             }
+            CsvExporter.Export("kleinberg_torus.csv", "r,run,hops,n,p,q,grid_type", rows);
         }
     }
 }
