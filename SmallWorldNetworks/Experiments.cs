@@ -1,4 +1,6 @@
-﻿namespace SmallWorldNetworks
+﻿using System.Net.NetworkInformation;
+
+namespace SmallWorldNetworks
 {
     public class Experiments
     {
@@ -31,6 +33,7 @@
             double[] rValues = { 0, 0.5, 1, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.5, 3, 4, 5, 6 };
             Random random = new Random();
             List<string> rows = new List<string>();
+            string gridType = torus ? "torus" : "flat";
             int run = 0;
             foreach (var r in rValues) 
             {
@@ -39,7 +42,7 @@
                 double totalHops = 0;
                 for (int i = 0; i < 5; i++) 
                 {
-                    KleinbergNetwork k = new KleinbergNetwork(n, p, q, r);
+                    KleinbergNetwork k = new KleinbergNetwork(n, p, q, r, torus);
                     for (int j = 0; j < attemptsPerR; j++) 
                     { 
 
@@ -50,11 +53,51 @@
                         if (hops == -1) notFound++;
                         else { steps++; totalHops += hops; }
                         run++;
-                        rows.Add($@"{r},{run},{hops},{n},{p},{q},{(torus ? "torus" : "flat")}");
+                        rows.Add($@"{r},{run},{hops},{n},{p},{q},{gridType}");
                     }
                 }
             }
-            CsvExporter.Export("kleinberg_torus.csv", "r,run,hops,n,p,q,grid_type", rows);
+            CsvExporter.Export($"kleinberg_{gridType}.csv", "r,run,hops,n,p,q,grid_type", rows);
+        }
+
+        public static void RunKleinbergSclaingExperiment(bool torus = false)
+        {
+            int[] nValues = { 10, 20, 30, 50, 75, 100 };
+            double[] rValues = { 0, 1, 1.5, 2, 3, 4 };
+            Random random = new Random();
+            List<string> rows = new List<string>();
+            string gridType = torus ? "torus" : "flat";
+
+            foreach (var n in nValues) 
+            {
+                foreach (var r in rValues) 
+                {
+                    double totalHops = 0;
+                    int successCount = 0;
+                    int failCount = 0;
+
+                    for (int run = 0; run < 5; run++) 
+                    {
+                        KleinbergNetwork k = new KleinbergNetwork(n, 1, 1, r, torus);
+
+                        for (int attempt = 0; attempt < 200; attempt++)
+                        {
+                            int source = random.Next(n * n);
+                            int target = random.Next(n * n);
+                            if (source == target) { attempt--; continue; }
+
+                            int hops = GreedyRouter.Route(k, source, target);
+                            if (hops == -1) failCount++;
+                            else { totalHops += hops; successCount++; }
+
+                            rows.Add($"{n},{r},{run},{hops},{gridType}");
+                        }
+                    }
+                    Console.WriteLine($"n={n}, r={r}: avg hops={totalHops / successCount:F2}, failures={failCount}");
+                }
+            }
+
+            CsvExporter.Export($"kleinberg_scaling_{gridType}.csv", "n,r,run,hops,grid_type", rows);
         }
     }
 }

@@ -9,15 +9,17 @@ namespace SmallWorldNetworks
         public int q;
         public double r;
         public int nodeCount; //number of all nodes
+        public bool torus;
         public List<int>[] adjacencyList;
         Random random;
 
-        public KleinbergNetwork(int n, int p, int q, double r)
+        public KleinbergNetwork(int n, int p, int q, double r, bool torus)
         {
             this.n = n;
             this.r = r;
             this.p = p;
             this.q = q;
+            this.torus = torus;
             nodeCount = n * n;
             adjacencyList = new List<int>[nodeCount];
             random = new Random();
@@ -113,23 +115,22 @@ namespace SmallWorldNetworks
             return index % n;
         }
 
-        public int GetLatticeDistance(int index1, int index2) 
+        public int GetLatticeDistance(int index1, int index2)
         {
-            int x1 = GetRow(index1);
-            int x2 = GetRow(index2);
-            int y1 = GetCol(index1);
-            int y2 = GetCol(index2);
+            int x1 = GetRow(index1), x2 = GetRow(index2);
+            int y1 = GetCol(index1), y2 = GetCol(index2);
 
-            return Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
+            int dx = Math.Abs(x1 - x2);
+            int dy = Math.Abs(y1 - y2);
 
-            //int dx = Math.Abs(x1 - x2);
-            //int dy = Math.Abs(y1 - y2);
+            if (this.torus)
+            {
+                dx = Math.Min(dx, n - dx);
+                dy = Math.Min(dy, n - dy);
+            }
 
-            //dx = Math.Min(dx, n - dx);
-            //dy = Math.Min(dy, n - dy);
+            return dx + dy;
 
-            //return dx + dy;
         }
-
     }
 }
